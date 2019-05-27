@@ -12,8 +12,6 @@ import android.widget.Toast;
 
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.Circle;
-import com.github.ybq.android.spinkit.style.DoubleBounce;
-import com.github.ybq.android.spinkit.style.WanderingCubes;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,28 +26,42 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class SourceActivity extends AppCompatActivity {
+public class NewsListActivity extends AppCompatActivity {
+
+    private String sourceId;
+    private String sourceName;
+    private ArrayList<News> newsLists;
 
     private RecyclerView recyclerView;
-    private ArrayList<Source> sources;
-    private SourceAdapter adapter;
+    private NewsListAdapter adapter;
+
     ProgressBar progressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_source);
-        setTitle("News Sources");
-        Toast.makeText(SourceActivity.this, "Welcome User!", Toast.LENGTH_SHORT).show();
+        setContentView(R.layout.activity_news_list);
+
         progressBar = (ProgressBar)findViewById(R.id.spin_kit);
         Sprite doubleBounce = new Circle();
         progressBar.setIndeterminateDrawable(doubleBounce);
-        sources = new ArrayList<>();
 
-        recyclerView = findViewById(R.id.recyclerView);
-        new FetchData().execute();
+        recyclerView = findViewById(R.id.recyclerView_newsList);
+
+        Bundle bundle = getIntent().getExtras();
+
+        if(bundle != null){
+            sourceId = bundle.getString("sourceId");
+            sourceName = bundle.getString("sourceName");
+
+            setTitle(sourceName);
+            newsLists = new ArrayList<>();
+
+            new FetchData().execute();
+        }
     }
 
-    private class FetchData extends AsyncTask<String, Void, String>{
+    private class FetchData extends AsyncTask<String, Void, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -65,7 +77,7 @@ public class SourceActivity extends AppCompatActivity {
             String jsonString = null;
 
             try{
-                String urlString = "https://newsapi.org/v2/sources?apiKey=16d22da23aa1448a836fb3731807d707";
+                String urlString = "https://newsapi.org/v2/top-headlines?sources=" + sourceId + "&apiKey=16d22da23aa1448a836fb3731807d707";
 
                 URL url = new URL(urlString);
 
@@ -105,7 +117,7 @@ public class SourceActivity extends AppCompatActivity {
                 //masukkin smua data ke variable output dalam bentuk string
                 jsonString = stringBuffer.toString();
 
-                Log.d("FETCHDATA", jsonString);
+                Log.d("FETCHDATA NEWS LIST", jsonString);
 
                 //konversi dari string -> sesuatu yg akan digunakan pada UI.
                 JSONObject jsonObject = new JSONObject(jsonString);
@@ -113,19 +125,25 @@ public class SourceActivity extends AppCompatActivity {
                 String statusCode = jsonObject.getString("status");
 
                 if(statusCode.equals("ok")){
-                    JSONArray jsonArray = jsonObject.getJSONArray("sources");
+                    JSONArray jsonArray = jsonObject.getJSONArray("articles");
 
                     //Loop data from API
                     for(int i = 0 ; i < jsonArray.length(); i++){
                         JSONObject sourceObj = jsonArray.getJSONObject(i);
 
-                        Source source = new Source();
-                        source.setId(sourceObj.getString("id"));
-                        source.setName(sourceObj.getString("name"));
-                        source.setDescription(sourceObj.getString("description"));
-                        source.setUrl(sourceObj.getString("url"));
+                        JSONObject source = sourceObj.getJSONObject("source");
 
-                        sources.add(source);
+//                        Log.d("ID DAPET", source.getString("id"));
+                        News news = new News();
+                        news.setId(source.getString("id"));
+                        news.setName(source.getString("name"));
+                        news.setTitle(sourceObj.getString("title"));
+                        news.setAuthor(sourceObj.getString("author"));
+                        news.setDescription(sourceObj.getString("description"));
+                        news.setUrl(sourceObj.getString("url"));
+                        news.setImageUrl(sourceObj.getString("urlToImage"));
+
+                        newsLists.add(news);
                     }
                 }
 
@@ -161,8 +179,8 @@ public class SourceActivity extends AppCompatActivity {
 
             progressBar.setVisibility(View.GONE);
 
-            recyclerView.setLayoutManager(new LinearLayoutManager(SourceActivity.this));
-            adapter = new SourceAdapter(SourceActivity.this, sources);
+            recyclerView.setLayoutManager(new LinearLayoutManager(NewsListActivity.this));
+            adapter = new NewsListAdapter(NewsListActivity.this, newsLists);
             recyclerView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }

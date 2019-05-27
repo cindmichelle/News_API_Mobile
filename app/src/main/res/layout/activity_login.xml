@@ -5,7 +5,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="center"
     tools:context=".LoginActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="-70dp"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="130dp"
+            android:src="@mipmap/logo"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="-50dp"
+            android:text="Fire News"
+            android:textColor="@color/black26"
+            android:fontFamily="serif"
+            android:textStyle="bold"
+            android:textSize="40sp"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="15dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,6 +48,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black26"
             android:text="Username" />
 
         <EditText
@@ -40,6 +73,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textColor="@color/black26"
             android:text="Password" />
 
         <EditText
@@ -47,17 +83,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="3"
+            android:background="@android:color/white"
             android:hint="Password"
             android:inputType="textPassword" />
 
     </LinearLayout>
 
-
     <Button
         android:id="@+id/btn_login"
         android:layout_width="276dp"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:background="@color/red"
         android:capitalize="sentences"
         android:clickable="true"
         android:text="login"
@@ -65,5 +101,6 @@
         android:layout_gravity="center"
         android:layout_marginVertical="10dp"
      />
+    </LinearLayout>
 
 </LinearLayout>
